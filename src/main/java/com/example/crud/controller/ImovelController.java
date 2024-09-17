@@ -1,9 +1,11 @@
 package com.example.crud.controller;
 
 import com.example.crud.domain.Imovel;
+import com.example.crud.dtos.ComodoDto;
 import com.example.crud.dtos.ImovelDto;
 import com.example.crud.service.ImovelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,5 +52,19 @@ public class ImovelController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         imovelService.deleteImovel(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @DeleteMapping("/{id}/comodo")
+    public ResponseEntity<Imovel> removeComodo(@PathVariable Long id, @RequestParam String nomeComodo) {
+        Imovel updatedImovel = imovelService.removeComodo(id, nomeComodo);
+        return ResponseEntity.ok().body(updatedImovel);
+    }
+
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    @PostMapping("/{id}/comodos")
+    public ResponseEntity<Imovel> addComodo(@PathVariable Long id, @RequestBody ComodoDto comodoDto) {
+        Imovel imovel = imovelService.addComodo(id, comodoDto);
+        return ResponseEntity.ok().body(imovel);
     }
 }

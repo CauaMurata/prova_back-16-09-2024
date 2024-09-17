@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ImovelService {
@@ -24,7 +23,6 @@ public class ImovelService {
         imovel.setDataCompra(data.dataCompra());
         imovel.setEndereco(data.endereco());
 
-        // Adiciona os comodos convertidos de ComodoDto para Comodo
         if (data.comodos() != null) {
             List<Comodo> comodos = data.comodos().stream()
                     .map(dto -> new Comodo(null, dto.getNome()))
@@ -70,5 +68,30 @@ public class ImovelService {
     public void deleteImovel(Long id) {
         Imovel imovel = this.findById(id);
         imovelRepository.delete(imovel);
+    }
+
+    public Imovel removeComodo(Long imovelId, String nomeComodo) {
+        return imovelRepository.findById(imovelId)
+                .map(imovel -> {
+                    Comodo comodoToRemove = imovel.getComodos().stream()
+                            .filter(comodo -> comodo.getNome().equals(nomeComodo))
+                            .findFirst()
+                            .orElseThrow(() -> new EntityNotFoundException("Comodo not found"));
+
+                    imovel.removeComodo(comodoToRemove);
+
+                    return imovelRepository.save(imovel);
+                })
+                .orElseThrow(() -> new EntityNotFoundException("Imovel not found"));
+    }
+
+    public Imovel addComodo(Long imovelId, ComodoDto comodoDto) {
+        return imovelRepository.findById(imovelId)
+                .map(imovel -> {
+                    Comodo newComodo = new Comodo(null, comodoDto.nome());
+                    imovel.addComodo(newComodo);
+                    return imovelRepository.save(imovel);
+                })
+                .orElseThrow(() -> new EntityNotFoundException("Imovel not found"));
     }
 }

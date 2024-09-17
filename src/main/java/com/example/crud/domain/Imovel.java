@@ -1,11 +1,10 @@
 package com.example.crud.domain;
 
-import com.example.crud.dtos.ImovelDto;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Table(name = "Imovel")
@@ -20,7 +19,7 @@ public class Imovel {
 
     private String descricao;
 
-    private Date dataCompra;
+    private LocalDate dataCompra;
 
     private String endereco;
 
